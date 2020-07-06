@@ -10,10 +10,29 @@
     <script>
         let cavas;
         let canvasContext;
+
         let ballX = 50;
         let ballY = 50;
         let ballSpeedX = 15;
         let ballSpeedY = 4;
+
+        let paddle1Y = 250;
+        let paddle2Y = 250;
+
+        const PADDLE_THICCNESS = 10; // Yes I named it like that on purpose
+        const PADDLE_HEIGHT = 100;
+
+        function calculateMousePos(event) {
+            let rect = canvas.getBoundingClientRect();
+            let root = document.documentElement;
+            let mouseX = event.clientX - rect.left - root.scrollLeft;
+            let mouseY = event.clientY - rect.top - root.scrollTop;
+
+            return {
+                x: mouseX,
+                y: mouseY
+            }
+        }
 
         window.onload = function() {
             canvas = document.getElementById("gameCanvas");
@@ -27,6 +46,17 @@
                 moveEverything();
                 drawEverything();
             }, 1000/framesPerSecond);
+
+            canvas.addEventListener('mousemove', (event) => {
+                let mousePos = calculateMousePos(event);
+                paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
+            });
+        }
+
+        function ballReset() {
+            ballSpeedX = -ballSpeedX;
+            ballX = canvas.width/2;
+            ballY = canvas.height/2;
         }
 
 
@@ -38,9 +68,19 @@
             // If we are touching or past the right side of the wall, reverse movement direction
             // YEEEE BOIIII WE MOVING IN REVERSE
             if (ballX >= canvas.width) {
-                    ballSpeedX = -ballSpeedX;
+                    if (ballY > paddle1Y && ballY < paddle2Y + PADDLE_HEIGHT) {
+                        ballSpeedX = -ballSpeedX;
+                    } else {
+                        ballReset();
+                    }
                 } else if (ballX <= 0) { // If we are touching or past the left side of the wall, reverse.
-                    ballSpeedX = -ballSpeedX; // YEEEEE BOI WE MOVING BACK IN THE NORMAL DIRECTION! WOOOOOOOO
+
+                    if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
+                        ballSpeedX = -ballSpeedX;
+                    } else {
+                        ballReset();
+                    }
+                    
                 } else if (ballY >= canvas.height) {
                     ballSpeedY = -ballSpeedY;
                 } else if (ballY <= 0) { // If we are touching or past the left side of the wall, reverse.
@@ -67,7 +107,12 @@
             // This is the whole game screen
             colorRect(0, 0, canvas.width, canvas.height, "black");
             // This is the white paddles used to hit the ball
-            colorRect(0, 210, 10, 100, "white");
+            // Left PLAYER Paddle
+            colorRect(0, paddle1Y, PADDLE_THICCNESS, PADDLE_HEIGHT, "white");
+
+            // Right AI Paddle
+            colorRect(canvas.width-PADDLE_THICCNESS, paddle2Y, PADDLE_THICCNESS, PADDLE_HEIGHT, "white");
+
             // DIS IS TEH BALL MAYNE! BOUNCE BOUNCE ALL DAY!
             colorCircle(ballX, ballY, 10, "white");
         }
