@@ -16,6 +16,9 @@
         let ballSpeedX = 15;
         let ballSpeedY = 4;
 
+        let player1Score = 0;
+        let player2Score = 0;
+
         let paddle1Y = 250;
         let paddle2Y = 250;
 
@@ -59,31 +62,48 @@
             ballY = canvas.height/2;
         }
 
+        // This sets up the AI
+        function computerMovement() {
+            let paddle2YCenter = paddle2Y + (PADDLE_HEIGHT/2);
+            if (paddle2YCenter < ballY-35) {
+                paddle2Y += 6;
+            } else if (paddle2YCenter > ballY+35) {
+                paddle2Y -= 6;
+            }
+        }
+
 
         // This controls the movement for the ball
         function moveEverything() {
-            ballX = ballX + ballSpeedX; // Increases the ball X coordinate, YEEEE BOI WE MOVING!!!
-            ballY = ballY + ballSpeedY; // Increases the ball Y coordinate, YEEEE BOI WE UP N DOWN woah!!!
+            computerMovement();
 
-            // If we are touching or past the right side of the wall, reverse movement direction
+            ballX += ballSpeedX; // Increases the ball X coordinate, YEEEE BOI WE MOVING!!!
+            ballY += ballSpeedY; // Increases the ball Y coordinate, YEEEE BOI WE UP N DOWN woah!!!
+
+            // If we are touching or past the LEFT side of the wall, reverse movement direction
             // YEEEE BOIIII WE MOVING IN REVERSE
-            if (ballX >= canvas.width) {
-                    if (ballY > paddle1Y && ballY < paddle2Y + PADDLE_HEIGHT) {
-                        ballSpeedX = -ballSpeedX;
-                    } else {
-                        ballReset();
-                    }
-                } else if (ballX <= 0) { // If we are touching or past the left side of the wall, reverse.
+            if (ballX <= 0) {
 
+                    // This checks if the ball is touching the paddle
                     if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
                         ballSpeedX = -ballSpeedX;
                     } else {
                         ballReset();
+                        player2Score++;
+                    } 
+                    // If we are touching or past the RIGHT side of the wall, reverse.
+                } else if (ballX >= canvas.width) {
+
+                    // This checks if the ball is touching the paddle
+                    if (ballY > paddle2Y && ballY < paddle2Y + PADDLE_HEIGHT) {
+                        ballSpeedX = -ballSpeedX;
+                    } else {
+                        ballReset();
+                        player1Score++;
                     }
-                    
-                } else if (ballY >= canvas.height) {
+                }  else if (ballY >= canvas.height) {
                     ballSpeedY = -ballSpeedY;
-                } else if (ballY <= 0) { // If we are touching or past the left side of the wall, reverse.
+                } else if (ballY <= 0) {
                     ballSpeedY = -ballSpeedY; // YEEEEE BOI WE MOVING BACK IN THE NORMAL DIRECTION! WOOOOOOOO
                 }
         }
@@ -115,6 +135,12 @@
 
             // DIS IS TEH BALL MAYNE! BOUNCE BOUNCE ALL DAY!
             colorCircle(ballX, ballY, 10, "white");
+
+            // Draw the player1 score text
+            canvasContext.fillText(player1Score, 100, 100 );
+
+            // Draw the player2 AKA THE AI score text
+            canvasContext.fillText(player2Score, canvas.width-100, 100 );
         }
     </script>
 </body>
