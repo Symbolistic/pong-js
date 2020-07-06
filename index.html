@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        let cavas;
+        let canvasContext;
+        let ballX = 50;
+        let ballY = 50;
+        let ballSpeedX = 15;
+        let ballSpeedY = 4;
+
+        window.onload = function() {
+            canvas = document.getElementById("gameCanvas");
+            canvasContext = canvas.getContext("2d");
+
+            // Sets the default FPS
+            let framesPerSecond = 30;
+
+            // Draws/updates something every frame per second
+            setInterval(() => {
+                moveEverything();
+                drawEverything();
+            }, 1000/framesPerSecond);
+        }
+
+
+        // This controls the movement for the ball
+        function moveEverything() {
+            ballX = ballX + ballSpeedX; // Increases the ball X coordinate, YEEEE BOI WE MOVING!!!
+            ballY = ballY + ballSpeedY; // Increases the ball Y coordinate, YEEEE BOI WE UP N DOWN woah!!!
+
+            // If we are touching or past the right side of the wall, reverse movement direction
+            // YEEEE BOIIII WE MOVING IN REVERSE
+            if (ballX >= canvas.width) {
+                    ballSpeedX = -ballSpeedX;
+                } else if (ballX <= 0) { // If we are touching or past the left side of the wall, reverse.
+                    ballSpeedX = -ballSpeedX; // YEEEEE BOI WE MOVING BACK IN THE NORMAL DIRECTION! WOOOOOOOO
+                } else if (ballY >= canvas.height) {
+                    ballSpeedY = -ballSpeedY;
+                } else if (ballY <= 0) { // If we are touching or past the left side of the wall, reverse.
+                    ballSpeedY = -ballSpeedY; // YEEEEE BOI WE MOVING BACK IN THE NORMAL DIRECTION! WOOOOOOOO
+                }
+        }
+
+        // This is just a function to setup all the canvas elements
+        function colorRect(leftX, topY, width, height, drawColor) {
+            canvasContext.fillStyle = drawColor;
+            canvasContext.fillRect(leftX, topY, width, height);
+        }
+
+        function colorCircle(centerX, centerY, radius, drawColor) {
+            canvasContext.fillStyle = drawColor;
+            canvasContext.beginPath();
+            canvasContext.arc(centerX, centerY, radius, 0, Math.PI * 2, true)
+            canvasContext.fill();
+        }
+
+        // This calls the canvas setup and draws it to the screen
+        // Leonardo da Vinci would be proud of these drawing skillz!
+        function drawEverything() {
+            // This is the whole game screen
+            colorRect(0, 0, canvas.width, canvas.height, "black");
+            // This is the white paddles used to hit the ball
+            colorRect(0, 210, 10, 100, "white");
+            // DIS IS TEH BALL MAYNE! BOUNCE BOUNCE ALL DAY!
+            colorCircle(ballX, ballY, 10, "white");
+        }
+    </script>
+</body>
+</html>
